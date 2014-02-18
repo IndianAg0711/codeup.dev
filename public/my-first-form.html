@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>My first HTML form</head>
+    <h2>User Login</h2>
 	<form method="POST" action="http://requestb.in/1dyvwax1">
     <p>
         <label for="username">Username</label>
@@ -13,4 +14,23 @@
     <p>
         <button type="submit">Login</button>
     </p>
-</form>
+    </form>
+    <h2>Compose an email</h2>
+    <form method="POST" action="http://requestb.in/1dyvwax1">
+        <p>
+            <label for="to">To:</label>
+            <input name="to" type="text">
+        </p>
+        <p>
+            <label for="from">From:</label>
+            <input name="from" type="text">
+        </p>
+        <p>
+            <label for="subject">Subject:</label>
+            <input name="subject" type="text">
+        </p>
+        <p>
+            <textarea name="email_body" rows="20" cols="80">Type your message here!</textarea>
+        </p>
+        <p>
+            <button type="submit">Send</button>
