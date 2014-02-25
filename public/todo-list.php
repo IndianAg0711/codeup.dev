@@ -3,12 +3,6 @@
 // var_dump($_GET);
 // var_dump($_FILES);
 
-$file = "list.txt";
-$handle = fopen($file, 'r');
-$string = fread($handle, filesize($file));
-$list = explode("\n", $string);
-fclose($handle);
-
 function save_file($array) {
 	$file = "list.txt";
 	$handle = fopen($file, 'w');
@@ -17,20 +11,26 @@ function save_file($array) {
 	fclose($handle);
 }
 
+function read_file($filename) {
+	$handle = fopen($filename, 'r');
+	$string = fread($handle, filesize($filename));
+	fclose($handle);
+	return explode("\n", $string);
+}
+
+$list = read_file("list.txt");
+
 if (count($_FILES) > 0 && $_FILES['uploaded_file']['error'] == 0) {
 	if ($_FILES['uploaded_file']['type'] == 'text/plain') {
 
 		// Upload file
 		$upload_dir = '/vagrant/sites/codeup.dev/public/uploads/';
-		$filename = basename($_FILES['uploaded_file']['name']);
-		$saved_filename = $upload_dir . $filename;
+		$uploaded_filename = basename($_FILES['uploaded_file']['name']);
+		$saved_filename = $upload_dir . $uploaded_filename;
 		move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $saved_filename);
 
-		// Open uploaded file and appending to current list
-		$handle = fopen($saved_filename, 'r');
-		$string = fread($handle, filesize($saved_filename));
-		$imported_list = explode("\n", $string);
-		fclose($handle);
+		// Open uploaded file
+		$imported_list = read_file($saved_filename);
 
 		// Overwrite existing list checkbox option
 		if (isset($_POST['overwrite']) && $_POST['overwrite'] == 1) {
@@ -76,14 +76,9 @@ if (isset($_GET['remove'])) {
 <body>
 	<h1>TODO List</h1>
 		<ul>
-			<?php
-			
-   			// Displaying list
-			foreach ($list as $key => $item) {
-				echo "<li>$item <a href='?remove=$key'>Remove</a></li>";
-			} 
-
-			?>
+			<? foreach ($list as $key => $item): ?>
+				<li><?= htmlspecialchars(strip_tags($item)); ?>	<a href='?remove=$key'>Remove</a></li>
+			<? endforeach; ?>
 		</ul>
 
 	<h1>Add a new item to the list?</h1>
