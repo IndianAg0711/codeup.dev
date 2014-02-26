@@ -3,9 +3,18 @@ var_dump($_POST);
 
 $address_book = array();
 
+function save_csv($array) {
+	$handle = fopen("address_book_data.csv", 'w');
+	foreach ($array as $fields) {
+		fputcsv($handle, $fields);
+	}
+	fclose($handle);
+}
+
 if (!empty($_POST['name']) && !empty($_POST['address']) && !empty($_POST['city']) && !empty($_POST['state']) && !empty($_POST['zip'])) {
 	$new_address = array($_POST['name'], $_POST['address'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['phone']);
 	array_push($address_book, $new_address);
+	save_csv($address_book);
 } else {
 	echo "ERROR. Please fill out all of the required fields before submitting.";
 }
