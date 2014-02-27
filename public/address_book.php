@@ -1,34 +1,79 @@
 <?php
 //var_dump($_POST);
 //var_dump($_GET);
+//var_dump($_FILES);
 
-// Save as .csv function
-function save_csv($array) {
-	$handle = fopen("address_book_data.csv", 'w');
-	foreach ($array as $fields) {
-		fputcsv($handle, $fields);
+// Creating class address data store
+class AddressDataStore {
+
+	public $filename = '';
+
+	function __construct($filename = "address_book_data.csv"){
+
+    $this->filename = $filename;
 	}
-	fclose($handle);
-}
 
-// Open address book
-function open_csv($filename) {
-	$address_book = [];
-	$handle = fopen($filename, 'r');
-	while (($data = fgetcsv($handle)) !== false) {
+    function read_address_book()
+    {
+        $address_book = [];
+		$handle = fopen($this->filename, 'r');
+		while (($data = fgetcsv($handle)) !== false) {
 		$address_book[] = $data;
-	}
-	fclose($handle);
-	return $address_book;
+		}
+		fclose($handle);
+		return $address_book;// Code to read file $this->filename
+    }
+
+    function write_address_book($addresses_array) 
+    {
+      	$handle = fopen($this->filename, 'w');
+		foreach ($addresses_array as $fields) {
+		fputcsv($handle, $fields);
+		}
+		fclose($handle);  // Code to write $addresses_array to file $this->filename
+    }
+
 }
 
-$address_book = open_csv('address_book_data.csv');
+$csv = new AddressDataStore();
+
+$address_book = $csv->read_address_book();
+
+// Checking for uploaded files
+if (count($_FILES) > 0 && $_FILES['uploaded_file']['error'] == 0) {
+	if ($_FILES['uploaded_file']['type'] == 'text/csv') {
+
+		// Upload file
+		$upload_dir = '/vagrant/sites/codeup.dev/public/uploads/';
+		$uploaded_filename = basename($_FILES['uploaded_file']['name']);
+		$saved_filename = $upload_dir . $uploaded_filename;
+		move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $saved_filename);
+
+		// Open uploaded file
+		$upload = new AddressDataStore($saved_filename);
+		$imported_address_book = $upload->read_address_book();
+
+		// Overwrite existing list checkbox option
+		if (isset($_POST['overwrite']) && $_POST['overwrite'] == 1) {
+				$address_book = $imported_address_book;
+				$csv->write_address_book($address_book);
+		} else {
+
+				// Append list and Save
+				$address_book = array_merge($address_book, $imported_address_book);
+				$csv->write_address_book($address_book);
+		}
+
+	}	else {
+			echo "<p>Error: Uploaded files must be .csv!</p>";
+	}	
+}
 
 // Validating all required fields have inputs
 if (!empty($_POST['name']) && !empty($_POST['address']) && !empty($_POST['city']) && !empty($_POST['state']) && !empty($_POST['zip'])) {
 	$new_address = array($_POST['name'], $_POST['address'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['phone']);
 	array_push($address_book, $new_address);
-	save_csv($address_book);
+	$csv->write_address_book($address_book);
 }
 // Fresh page loads won't display error
 else if (empty($_POST)) {
@@ -44,11 +89,10 @@ if (isset($_GET['remove'])) {
    	unset($address_book[$item_to_remove]);
    
    	// Save file
-   	save_csv($address_book);
-	//header("Location: address_book.php");
+   	$csv->write_address_book($address_book);
+	header("Location: address_book.php");
 }
 
-print_r($address_book);
 ?>
 
 <!DOCTYPE html>
@@ -74,7 +118,7 @@ print_r($address_book);
 	</table>
 	
 	<h1>Add yourself to the list?</h1>
-	<form method="POST" action="">
+	<form method="POST" enctype="multipart/form-data" action="">
 		<p>
 			<label for="name">Full Name:</label>
 			<input id="name" name="name" type="text" value= "<?= isset($error) ? htmlspecialchars(strip_tags($_POST['name'])) : ''; ?>"> *
@@ -101,6 +145,12 @@ print_r($address_book);
 		</p>
 		<p>
 			* <em>Required field</em>
+		</p>
+		<p>
+				<label for="uploaded_file">File to Add:</label>
+				<input id="uploaded_file" name="uploaded_file" type="file">
+				<label for="overwrite">Overwrite existing list?</label>
+				<input type="checkbox" id="overwrite" name="overwrite" value=1>
 		</p>
 		<?php
 		if (isset($error)) {
