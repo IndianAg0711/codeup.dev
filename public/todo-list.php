@@ -3,22 +3,11 @@
 // var_dump($_GET);
 // var_dump($_FILES);
 
-function save_file($array) {
-	$file = "list.txt";
-	$handle = fopen($file, 'w');
-	$item_string = implode("\n", $array);
-	fwrite($handle, $item_string);
-	fclose($handle);
-}
+require('filestore.php');
 
-function read_file($filename) {
-	$handle = fopen($filename, 'r');
-	$string = fread($handle, filesize($filename));
-	fclose($handle);
-	return explode("\n", $string);
-}
+$todo = new Filestore('list.txt');
 
-$list = read_file("list.txt");
+$list = $todo->read_lines();
 
 if (count($_FILES) > 0 && $_FILES['uploaded_file']['error'] == 0) {
 	if ($_FILES['uploaded_file']['type'] == 'text/plain') {
@@ -30,17 +19,17 @@ if (count($_FILES) > 0 && $_FILES['uploaded_file']['error'] == 0) {
 		move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $saved_filename);
 
 		// Open uploaded file
-		$imported_list = read_file($saved_filename);
+		$imported_list = $todo->read_lines();
 
 		// Overwrite existing list checkbox option
 		if (isset($_POST['overwrite']) && $_POST['overwrite'] == 1) {
 				$list = $imported_list;
-				save_file($list);
+				$todo->write_lines($list);
 		} else {
 
 				// Append list and Save
 				$list = array_merge($list, $imported_list);
-				save_file($list);
+				$todo->write_lines($list);
 		}
 
 	}	else {
@@ -53,7 +42,7 @@ if ((isset($_POST['new_item'])) && ($_POST['new_item'] != '')) {
 	array_push($list, $_POST['new_item']);
 
 	// Save file
-	save_file($list);
+	$todo->write_lines($list);
 
 }
 
@@ -63,7 +52,7 @@ if (isset($_GET['remove'])) {
    	unset($list[$item_to_remove]);
    
    	// Save file
-   	save_file($list);
+   	$todo->write_lines($list);
 	header("Location: todo-list.php");
 }
 ?>
@@ -77,7 +66,7 @@ if (isset($_GET['remove'])) {
 	<h1>TODO List</h1>
 		<ul>
 			<? foreach ($list as $key => $item): ?>
-				<li><?= htmlspecialchars(strip_tags($item)); ?>	<a href='?remove=$key'>Remove</a></li>
+				<li><?= htmlspecialchars(strip_tags($item)); ?>	<a href='?remove=<?=$key?>'>Remove</a></li>
 			<? endforeach; ?>
 		</ul>
 
