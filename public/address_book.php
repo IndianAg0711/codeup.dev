@@ -1,12 +1,12 @@
 <?php
-//var_dump($_POST);
-//var_dump($_GET);
-//var_dump($_FILES);
+// var_dump($_POST);
+// var_dump($_GET);
+// var_dump($_FILES);
 
 // Including Class from another file
-include('address_data_store.php');
+require_once('address_data_store.php');
 
-$csv = new AddressDataStore();
+$csv = new AddressDataStore('address_book_data.csv');
 
 $address_book = $csv->read_address_book();
 
@@ -47,7 +47,7 @@ if (!empty($_POST['name']) && !empty($_POST['address']) && !empty($_POST['city']
 	$csv->write_address_book($address_book);
 }
 // Fresh page loads won't display error
-else if (empty($_POST)) {
+else if (empty($_POST) || $_FILES['uploaded_file']['error'] == 0) {
 } 
 // Show error when all required fields aren't populated
 else {
