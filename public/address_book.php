@@ -3,37 +3,8 @@
 //var_dump($_GET);
 //var_dump($_FILES);
 
-// Creating class address data store
-class AddressDataStore {
-
-	public $filename = '';
-
-	function __construct($filename = "address_book_data.csv"){
-
-    $this->filename = $filename;
-	}
-
-    function read_address_book()
-    {
-        $address_book = [];
-		$handle = fopen($this->filename, 'r');
-		while (($data = fgetcsv($handle)) !== false) {
-		$address_book[] = $data;
-		}
-		fclose($handle);
-		return $address_book;// Code to read file $this->filename
-    }
-
-    function write_address_book($addresses_array) 
-    {
-      	$handle = fopen($this->filename, 'w');
-		foreach ($addresses_array as $fields) {
-		fputcsv($handle, $fields);
-		}
-		fclose($handle);  // Code to write $addresses_array to file $this->filename
-    }
-
-}
+// Including Class from another file
+include('address_data_store.php');
 
 $csv = new AddressDataStore();
 
