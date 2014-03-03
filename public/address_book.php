@@ -8,7 +8,7 @@ require_once('address_data_store.php');
 
 $csv = new AddressDataStore('address_book_data.csv');
 
-$address_book = $csv->read_address_book();
+$address_book = $csv->read();
 
 // Checking for uploaded files
 if (count($_FILES) > 0 && $_FILES['uploaded_file']['error'] == 0) {
@@ -22,17 +22,17 @@ if (count($_FILES) > 0 && $_FILES['uploaded_file']['error'] == 0) {
 
 		// Open uploaded file
 		$upload = new AddressDataStore($saved_filename);
-		$imported_address_book = $upload->read_address_book();
+		$imported_address_book = $upload->read();
 
 		// Overwrite existing list checkbox option
 		if (isset($_POST['overwrite']) && $_POST['overwrite'] == 1) {
 				$address_book = $imported_address_book;
-				$csv->write_address_book($address_book);
+				$csv->write($address_book);
 		} else {
 
 				// Append list and Save
 				$address_book = array_merge($address_book, $imported_address_book);
-				$csv->write_address_book($address_book);
+				$csv->write($address_book);
 		}
 
 	}	else {
@@ -40,11 +40,35 @@ if (count($_FILES) > 0 && $_FILES['uploaded_file']['error'] == 0) {
 	}	
 }
 
+if (isset($_POST['name']) && strlen($_POST['name']) > 125) {
+	throw new Exception('Name must be 125 character or less');
+}
+
+if (isset($_POST['address']) && strlen($_POST['address']) > 125) {
+	throw new Exception('Address must be 125 character or less');
+}
+
+if (isset($_POST['city']) && strlen($_POST['city']) > 125) {
+	throw new Exception('City must be 125 character or less');
+}
+
+if (isset($_POST['state']) && strlen($_POST['state']) > 125) {
+	throw new Exception('State must be 125 character or less');
+}
+
+if (isset($_POST['zip']) && strlen($_POST['zip']) > 125) {
+	throw new Exception('Zip code must be 125 character or less');
+}
+
+if (isset($_POST['phone']) && strlen($_POST['phone']) > 125) {
+	throw new Exception('Phone# must be 125 character or less');
+}
+
 // Validating all required fields have inputs
 if (!empty($_POST['name']) && !empty($_POST['address']) && !empty($_POST['city']) && !empty($_POST['state']) && !empty($_POST['zip'])) {
 	$new_address = array($_POST['name'], $_POST['address'], $_POST['city'], $_POST['state'], $_POST['zip'], $_POST['phone']);
 	array_push($address_book, $new_address);
-	$csv->write_address_book($address_book);
+	$csv->write($address_book);
 }
 // Fresh page loads won't display error
 else if (empty($_POST) || $_FILES['uploaded_file']['error'] == 0) {
@@ -60,7 +84,7 @@ if (isset($_GET['remove'])) {
    	unset($address_book[$item_to_remove]);
    
    	// Save file
-   	$csv->write_address_book($address_book);
+   	$csv->write($address_book);
 	header("Location: address_book.php");
 }
 
