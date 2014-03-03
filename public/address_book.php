@@ -41,7 +41,11 @@ if (count($_FILES) > 0 && $_FILES['uploaded_file']['error'] == 0) {
 }
 
 if (isset($_POST['name']) && strlen($_POST['name']) > 125) {
-	throw new Exception('Name must be 125 character or less');
+	try {
+		throw new Exception('Name must be 125 character or less');
+	} catch (Exception $e) {
+		echo "$e";
+	}
 }
 
 if (isset($_POST['address']) && strlen($_POST['address']) > 125) {
