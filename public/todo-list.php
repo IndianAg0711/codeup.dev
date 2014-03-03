@@ -48,7 +48,11 @@ if ((isset($_POST['new_item'])) && ($_POST['new_item'] != '') && ((strlen($_POST
 	$todo->write($list);
 
 } elseif (((isset($_POST['new_item'])) && ($_POST['new_item'] == '')) || (isset($_POST['new_item']) && ((strlen($_POST['new_item'])) > 240))) {
-	throw new Exception('New Item has to be between 1 and 240 characters.');
+	try {
+		throw new Exception('New Item has to be between 1 and 240 characters.');
+	} catch (Exception $e) {
+		echo "$e";
+	}
 }
 
 // Removing an item
