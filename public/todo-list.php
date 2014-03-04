@@ -3,6 +3,8 @@
 // var_dump($_GET);
 // var_dump($_FILES);
 
+class InvalidInputException extends Exception {}
+
 require('filestore.php');
 
 $todo = new Filestore('list.txt');
@@ -49,8 +51,8 @@ if ((isset($_POST['new_item'])) && ($_POST['new_item'] != '') && ((strlen($_POST
 
 } elseif (((isset($_POST['new_item'])) && ($_POST['new_item'] == '')) || (isset($_POST['new_item']) && ((strlen($_POST['new_item'])) > 240))) {
 	try {
-		throw new Exception('New Item has to be between 1 and 240 characters.');
-	} catch (Exception $e) {
+		throw new InvalidInputException('New Item has to be between 1 and 240 characters.');
+	} catch (InvalidInputException $e) {
 		echo "$e";
 	}
 }
