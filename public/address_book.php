@@ -3,6 +3,8 @@
 // var_dump($_GET);
 // var_dump($_FILES);
 
+class InvalidInputException extends Exception {}
+
 // Including Class from another file
 require_once('address_data_store.php');
 
@@ -42,8 +44,8 @@ if (count($_FILES) > 0 && $_FILES['uploaded_file']['error'] == 0) {
 
 if (isset($_POST['name']) && strlen($_POST['name']) > 125) {
 	try {
-		throw new Exception('Name must be 125 character or less');
-	} catch (Exception $e) {
+		throw new InvalidInputException('Name must be 125 character or less');
+	} catch (InvalidInputException $e) {
 		echo "$e";
 	}
 }
