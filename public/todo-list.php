@@ -69,6 +69,9 @@ if (isset($_GET['remove'])) {
 ?>
 
 <!DOCTYPE html>
+
+<link rel="stylesheet" href="/css/todo-list.css">
+
 <html>
 <head>
 	<title>TODO List</title>
