@@ -17,11 +17,6 @@ if (isset($_GET['name'])) {
 	$database = $mysqli->query('SELECT * FROM national_parks');
 }
 
-// Use print_r() to show rows using MYSQLI_ASSOC
-// while ($row = $database->fetch_assoc()) {
-//     print_r($row);
-// }
-
 ?>
 <html>
 <head>
