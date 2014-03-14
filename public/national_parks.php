@@ -36,7 +36,6 @@ if (isset($_GET['name'])) {
 <h1 class="text-center">National Parks</h1>
 <table class='table table-striped table-bordered'>
 	<tr>
-		<th></th>
 		<th>Name: <br><a href='?name'><span class="glyphicon glyphicon-sort-by-alphabet"></span></a>&nbsp;<a href='?name_d'><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></th>
 		<th>Location: <br><a href='?location'><span class="glyphicon glyphicon-sort-by-alphabet"></span></a>&nbsp;<a href='?location_d'><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></th>
 		<th>Description:</th>
@@ -45,11 +44,12 @@ if (isset($_GET['name'])) {
 	</tr>
 	<? while ($row = $database->fetch_assoc()) : ?>
 	<tr>
-		<? foreach ($row as $datum) : ?>
-		<td>
-			<?= $datum; ?>
-		</td>
-		<? endforeach; ?>
+		 <td> <?=$row['name'];?> </td>
+		 <td> <?=$row['location'];?> </td>
+		 <td> <?=$row['description'];?> </td>
+		 <td> <?=$row['date_established'];?> </td>
+		 <td> <?=$row['area_in_acres'];?> </td>
+		
 	</tr>
 	<? endwhile; ?>
 </table>
