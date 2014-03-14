@@ -30,29 +30,42 @@ if (isset($_GET['name'])) {
 <html>
 <head>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<script type="text/javascript" src="js/jquery-latest.js"></script> 
+	<script type="text/javascript" src="js/jquery.tablesorter.js"></script> 
 	<title></title>
 </head>
 <body>
 <h1 class="text-center">National Parks</h1>
-<table class='table table-striped table-bordered'>
-	<tr>
-		<th>Name: <br><a href='?name'><span class="glyphicon glyphicon-sort-by-alphabet"></span></a>&nbsp;<a href='?name_d'><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></th>
-		<th>Location: <br><a href='?location'><span class="glyphicon glyphicon-sort-by-alphabet"></span></a>&nbsp;<a href='?location_d'><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></th>
-		<th>Description:</th>
-		<th>Date Established: <br><a href='?date_established'><span class="glyphicon glyphicon-sort-by-alphabet"></span></a>&nbsp;<a href='?date_established_d'><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></th>
-		<th>Area (acres):</th>
-	</tr>
+<table class='table table-striped table-bordered tablesorter' id="myTable">
+	<thead>
+		<tr>
+			<th>Name: <br><a href='?name'><span class="glyphicon glyphicon-sort-by-alphabet"></span></a>&nbsp;<a href='?name_d'><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></th>
+			<th>Location: <br><a href='?location'><span class="glyphicon glyphicon-sort-by-alphabet"></span></a>&nbsp;<a href='?location_d'><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></th>
+			<th>Description:</th>
+			<th>Date Established: <br><a href='?date_established'><span class="glyphicon glyphicon-sort-by-alphabet"></span></a>&nbsp;<a href='?date_established_d'><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></th>
+			<th>Area (acres):</th>
+		</tr>
+	</thead>
+	<tbody>
 	<? while ($row = $database->fetch_assoc()) : ?>
-	<tr>
-		 <td> <?=$row['name'];?> </td>
-		 <td> <?=$row['location'];?> </td>
-		 <td> <?=$row['description'];?> </td>
-		 <td> <?=$row['date_established'];?> </td>
-		 <td> <?=$row['area_in_acres'];?> </td>
-		
-	</tr>
+		<tr>
+			 <td> <?=$row['name'];?> </td>
+			 <td> <?=$row['location'];?> </td>
+			 <td> <?=$row['description'];?> </td>
+			 <td> <?=$row['date_established'];?> </td>
+			 <td> <?=$row['area_in_acres'];?> </td>
+			
+		</tr>
 	<? endwhile; ?>
+	</tbody>
 </table>
+<script type='text/javascript'>
+$(document).ready(function() 
+    { 
+        $("#myTable").tablesorter(); 
+    } 
+);
+</script>
 		
 </body>
 </html>
